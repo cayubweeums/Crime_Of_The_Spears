@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -12,6 +13,8 @@ public class GameManager : MonoBehaviour
     public GameObject dialogText;
     public GameObject startButton;
     public GameObject backgroundImage;
+    public GameObject canvas;
+    public GameObject events;
 
 
     private Coroutine dialogCo;
@@ -34,6 +37,8 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(canvas);
+            DontDestroyOnLoad(events);
         }
         else
         {
@@ -67,7 +72,7 @@ public class GameManager : MonoBehaviour
     public void StartButton()
     {
         startButton.SetActive(false);
-        StartCoroutine(ColorLerp(new Color(1, 1, 1, 0), 1.5f));
+        StartCoroutine(LoadYourAsyncScene("MainWorld"));
     }
 
     public void GameOver()
@@ -92,7 +97,17 @@ public class GameManager : MonoBehaviour
         }
 
         i.color = endValue;
+    }
 
+    IEnumerator LoadYourAsyncScene(string scene)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
+
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        StartCoroutine(ColorLerp(new Color(1, 1, 1, 0), 1.5f));
     }
 
 }
