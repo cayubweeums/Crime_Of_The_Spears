@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -9,6 +10,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public GameObject dialogBox;
     public GameObject dialogText;
+    public GameObject startButton;
+    public GameObject backgroundImage;
+
 
     private Coroutine dialogCo;
 
@@ -58,6 +62,37 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
         
+    }
+
+    public void StartButton()
+    {
+        startButton.SetActive(false);
+        StartCoroutine(ColorLerp(new Color(1, 1, 1, 0), 1.5f));
+    }
+
+    public void GameOver()
+    {
+        startButton.SetActive(true);
+        StopAllCoroutines();
+        HideDialog();
+        StartCoroutine(ColorLerp(new Color(1, 1, 1, 1), 1));
+    }
+
+    IEnumerator ColorLerp(Color endValue, float duration)
+    {
+        float time = 0;
+        Image i = backgroundImage.GetComponent<Image>();
+        Color startValue = i.color;
+
+        while (time < duration)
+        {
+            i.color = Color.Lerp(startValue, endValue, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        i.color = endValue;
+
     }
 
 }
